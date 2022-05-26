@@ -1,7 +1,6 @@
 const req = require("express/lib/request");
 const db = require("../db");
 const Post = db.posts;
-// const User = db.users;
 
 //create userid
 exports.create = (req, res) => {
@@ -63,9 +62,9 @@ exports.edit = async (req, res) => {
 exports.publish = async (req, res) => {
   const { post_id } = req.body;
 
-  // if (!_id) {
-  //     return res.status(400).send({ message: "All inputs required" })
-  // }
+  if (!post_id) {
+    return res.status(400).send({ message: "All inputs required" });
+  }
 
   try {
     const publishPost = await Post.findOneAndUpdate(
@@ -115,7 +114,7 @@ exports.getDrafts = async (req, res) => {
 // delete posts
 exports.delete = async (req, res) => {
   const { post_id } = req.body;
-console.log("first")
+
   if (!post_id) {
     return res.status(400).send({ message: "All inputs required" });
   }

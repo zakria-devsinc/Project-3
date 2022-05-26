@@ -1,8 +1,8 @@
 const db = require("../db");
 const User = db.users;
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const config = require("../db.config.js")
+const config = require("../db.config.js");
 
 // user creation
 exports.create = async (req, res) => {
@@ -17,7 +17,7 @@ exports.create = async (req, res) => {
 
   if (oldUser) {
     res.status(409).send({ message: "User Already Exist" });
-    return
+    return;
   }
 
   const user = new User({
@@ -29,13 +29,9 @@ exports.create = async (req, res) => {
   user
     .save(user)
     .then(() => {
-
-      const token = jwt.sign(
-        { user_id: user._id, email },
-        config.secretKey,
-        {
-          expiresIn: '2h'
-        });
+      const token = jwt.sign({ user_id: user._id, email }, config.secretKey, {
+        expiresIn: "2h",
+      });
 
       user.token = token;
       res.status(201).json(user);
@@ -60,25 +56,17 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      const token = jwt.sign(
-
-        { user_id: user._id, email },
-        config.secretKey,
-        {
-          expiresIn: '2h'
-        }
-      );
+      const token = jwt.sign({ user_id: user._id, email }, config.secretKey, {
+        expiresIn: "2h",
+      });
 
       user.token = token;
       res.status(201).json(user);
-    }
-    else
-      res.status(400).send({ message: "InValid Credentials" })
-  }
-  catch (error) {
+    } else res.status(400).send({ message: "InValid Credentials" });
+  } catch (error) {
     res.status(500).send({
-      message: error.message || "Some error occurred while fetching the user in login",
+      message:
+        error.message || "Some error occurred while fetching the user in login",
     });
   }
-
-}
+};

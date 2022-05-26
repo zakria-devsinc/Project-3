@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
-const { isEmail } = require('validator')
+const { isEmail } = require("validator");
 
 let UserSchema = mongoose.Schema(
   {
@@ -12,7 +12,7 @@ let UserSchema = mongoose.Schema(
       type: String,
       required: true,
       index: { unique: true },
-      validate: [isEmail, "Invalid Email"]
+      validate: [isEmail, "Invalid Email"],
     },
     password: {
       type: String,
@@ -34,13 +34,6 @@ UserSchema.pre("save", async function (next) {
   this.password = hash;
   next();
 });
-
-// UserSchema.methods.isValidPassword = async function (password) {
-//   const user = this;
-//   const compare = await bcrypt.compare(password, this.password);
-
-//   return compare;
-// };
 
 UserSchema.method.toJSON = function () {
   const { __v, _id, ...object } = this.toObject();

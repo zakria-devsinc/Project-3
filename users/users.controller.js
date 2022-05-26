@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const config = require("../db.config.js");
 
-// user creation
+// user creation using
 exports.create = async (req, res) => {
   const { name, email, password } = req.body;
 

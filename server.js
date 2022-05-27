@@ -4,7 +4,6 @@ const bodyParser = require("body-parser");
 const app = express();
 const db = require("./db");
 
-require("dotenv").config();
 
 let urlEncodedParser = bodyParser.urlencoded({
   extended: true,

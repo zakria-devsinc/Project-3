@@ -2,7 +2,7 @@ const db = require("../db");
 const User = db.users;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const config = require("../db.config.js");
+const config = require("../config/db.config.js");
 
 // user creation using
 exports.create = async (req, res) => {

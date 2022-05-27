@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const app = express();
 const db = require("./db");
 
+
 let urlEncodedParser = bodyParser.urlencoded({
   extended: true,
 });
@@ -36,7 +37,7 @@ require("./users/user.routes")(app);
 // posts routes
 require("./posts/posts.routes")(app);
 
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, () => {
   console.log(`Server is runnig on the port ${PORT}`);

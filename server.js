@@ -30,6 +30,7 @@ db.mongoose
     process.exit();
   });
 
+app.get("/", (req, res) => {res.send({message:"Welcome to my application"})});
 //users routes
 require("./users/user.routes")(app);
 // posts routes

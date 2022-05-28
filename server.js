@@ -35,7 +35,7 @@ app.get("/", (req, res) => {
 });
 //users routes created
 require("./users/user.routes")(app);
-// posts routes
+// posts routes created
 require("./posts/posts.routes")(app);
 
 const PORT = process.env.PORT || 8080;

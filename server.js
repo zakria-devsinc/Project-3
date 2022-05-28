@@ -3,7 +3,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const app = express();
 const db = require("./db");
-
+require("dotenv").config();
 
 let urlEncodedParser = bodyParser.urlencoded({
   extended: true,
@@ -20,6 +20,8 @@ db.mongoose
   .connect(db.url, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
   })
   .then(() => {
     console.log("Connected to the database");

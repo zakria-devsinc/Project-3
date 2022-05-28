@@ -2,7 +2,6 @@ const db = require("../db");
 const User = db.users;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const config = require("../config/db.config.js");
 
 // user creation using
 exports.create = async (req, res) => {
@@ -29,9 +28,13 @@ exports.create = async (req, res) => {
   user
     .save(user)
     .then(() => {
-      const token = jwt.sign({ user_id: user._id, email }, config.secretKey, {
-        expiresIn: "2h",
-      });
+      const token = jwt.sign(
+        { user_id: user._id, email },
+        process.env.SECRET_KEY || "zakria",
+        {
+          expiresIn: "2h",
+        }
+      );
 
       user.token = token;
       res.status(201).json(user);
@@ -56,9 +59,13 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      const token = jwt.sign({ user_id: user._id, email }, config.secretKey, {
-        expiresIn: "1h",
-      });
+      const token = jwt.sign(
+        { user_id: user._id, email },
+        process.env.SECRET_KEY || "zakria",
+        {
+          expiresIn: "1h",
+        }
+      );
 
       user.token = token;
       res.status(201).json(user);

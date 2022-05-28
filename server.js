@@ -19,7 +19,6 @@ app.use(bodyParser.json());
 db.mongoose
   .connect(db.url, {
     useNewUrlParser: true,
-    // useUnifiedTopology: true,
     useCreateIndex: true,
     useFindAndModify: false,
   })

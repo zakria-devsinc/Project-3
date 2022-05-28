@@ -18,8 +18,6 @@ app.use(bodyParser.json());
 db.mongoose
   .connect(db.url, {
     useNewUrlParser: true,
-    useCreateIndex: true,
-    useFindAndModify: false,
   })
   .then(() => {
     console.log("Connected to the database");

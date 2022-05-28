@@ -33,7 +33,7 @@ db.mongoose
 app.get("/", (req, res) => {
   res.send({ message: "Welcome to my application" });
 });
-//users routes
+//users routes created
 require("./users/user.routes")(app);
 // posts routes
 require("./posts/posts.routes")(app);

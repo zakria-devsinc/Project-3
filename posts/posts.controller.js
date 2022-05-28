@@ -1,4 +1,3 @@
-const req = require("express/lib/request");
 const db = require("../db");
 const Post = db.posts;
 

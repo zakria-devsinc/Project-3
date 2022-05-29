@@ -19,6 +19,7 @@ app.use(bodyParser.json());
 db.mongoose
   .connect(db.url, {
     useNewUrlParser: true,
+    useUnifiedTopology: true,
   })
   .then(() => {
     console.log("Connected to the database");
@@ -41,3 +42,5 @@ const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server is runnig on the port ${PORT}`);
 });
+
+// "mongodb+srv://zakria:zakria3637@cluster0.etqfzty.mongodb.net/test"

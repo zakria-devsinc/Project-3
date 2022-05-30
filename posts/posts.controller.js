@@ -1,9 +1,10 @@
-const db = require("../db");
+const { db } = require("../db");
 const Post = db.posts;
 
 //create userid
 exports.create = (req, res) => {
-  const { title, content, isPublished, userId } = req.body;
+  const { title, content, isPublished } = req.body;
+  const userId = req.session?.user?._id;
 
   if (!(title && content && isPublished && userId)) {
     return res.status(400).send({ message: "All inputs required" });
@@ -19,7 +20,12 @@ exports.create = (req, res) => {
   post
     .save(post)
     .then((data) => {
-      res.status(201).json(data);
+      res.status(200).send({
+        post_id: data._id,
+        title: data.title,
+        content: data.content,
+        isPublished: data.isPublished,
+      });
     })
     .catch((error) => {
       res.status(500).send({
@@ -87,19 +93,19 @@ exports.publish = async (req, res) => {
 
 // get drafts
 exports.getDrafts = async (req, res) => {
-  const id = req.params.id;
+  const userId = req.session?.user?._id;
 
-  if (!id) {
+  if (!userId) {
     return res.status(400).send({ message: "All inputs required" });
   }
 
   try {
-    const draftPosts = await Post.find({ userId: id, isPublished: false });
+    const draftPosts = await Post.find({ userId: userId, isPublished: false });
 
     if (!draftPosts) {
       return res
         .status(400)
-        .send({ message: "draft post not found with given id " });
+        .send({ message: "drafts posts not found with given id " });
     } else {
       return res.status(201).json(draftPosts);
     }
@@ -138,18 +144,44 @@ exports.delete = async (req, res) => {
 // get all published posts
 exports.getAll = async (req, res) => {
   try {
-    const publishedPOsts = await Post.find({ isPublished: true });
+    const publishedPosts = await Post.find({ isPublished: true });
 
-    if (!publishedPOsts) {
+    if (!publishedPosts) {
       return res.status(400).send({ message: "published post not founds " });
     } else {
-      return res.status(201).json(publishedPOsts);
+      return res.status(201).json(publishedPosts);
     }
   } catch (error) {
     return res.status(500).send({
       message:
         error.message ||
         "Some error occurred while fetching the published posts",
+    });
+  }
+};
+
+//  get my posts
+exports.getMyPosts = async (req, res) => {
+  const userId = req.session?.user?._id;
+  if (!userId) {
+    return res.status(400).send({ message: "All inputs required" });
+  }
+
+  try {
+    const publishedPosts = await Post.find({
+      isPublished: true,
+      userId: userId,
+    });
+
+    if (!publishedPosts) {
+      return res.status(400).send({ message: "my post not founds " });
+    } else {
+      return res.status(201).json(publishedPosts);
+    }
+  } catch (error) {
+    return res.status(500).send({
+      message:
+        error.message || "Some error occurred while fetching the my posts",
     });
   }
 };

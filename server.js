@@ -1,8 +1,9 @@
 const express = require("express");
+const session = require("express-session");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const app = express();
-const db = require("./db");
+const { db } = require("./db");
 require("dotenv").config();
 
 let urlEncodedParser = bodyParser.urlencoded({
@@ -11,36 +12,32 @@ let urlEncodedParser = bodyParser.urlencoded({
 let corsOptions = {
   origin: "*",
 };
+let router = require("express").Router();
 
+app.use(
+  session({
+    secret: process.env.SECRET_KEY,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
 app.use(urlEncodedParser);
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
+app.use("/api", router);
 
-db.mongoose
-  .connect(db.url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    console.log("Connected to the database");
-  })
-  .catch((err) => {
-    console.log("cannot Connected to the database", err);
-    process.exit();
-  });
+db.connectDatabase();
 
-app.get("/", (req, res) => {
+router.get("/", (req, res) => {
   res.send({ message: "Welcome to my application" });
 });
 //users routes created
-require("./users/user.routes")(app);
+require("./users/user.routes")(router);
 // posts routes created
-require("./posts/posts.routes")(app);
+require("./posts/posts.routes")(router);
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
   console.log(`Server is runnig on the port ${PORT}`);
 });
-
-// "mongodb+srv://zakria:zakria3637@cluster0.etqfzty.mongodb.net/test"

@@ -10,7 +10,9 @@ const verifyToken = (req, res, next) => {
       .send({ message: "A token is required for authentication" });
   }
   try {
-    const decoded = jwt.verify(token, process.env.SECRET_KEY || "zakria");
+    const decoded = jwt.verify(token, process.env.SECRET_KEY, {
+      expiresIn: process.env.token_duration,
+    });
 
     req.user = decoded;
   } catch (error) {

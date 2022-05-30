@@ -1,4 +1,5 @@
-const db = require("../db");
+const { db } = require("../db");
+
 const User = db.users;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -11,9 +12,8 @@ exports.create = async (req, res) => {
     res.status(400).send({ message: "All inputs is required" });
     return;
   }
-
+  User;
   const oldUser = await User.findOne({ email });
-
   if (oldUser) {
     res.status(409).send({ message: "User Already Exist" });
     return;
@@ -25,25 +25,22 @@ exports.create = async (req, res) => {
     password: password,
   });
 
-  user
-    .save(user)
-    .then(() => {
+  user.save((error, result) => {
+    if (error) {
+      res.status(500).send({
+        message: error.message || "Some error occurred while creating the user",
+      });
+    } else {
       const token = jwt.sign(
         { user_id: user._id, email },
-        process.env.SECRET_KEY || "zakria",
-        {
-          expiresIn: "2h",
-        }
+        process.env.SECRET_KEY,
+        { expiresIn: process.env.token_duration }
       );
 
       user.token = token;
-      res.status(201).json(user);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred while creating the user",
-      });
-    });
+      res.status(200).send({ message: "Signed Up Succesfully" });
+    }
+  });
 };
 
 //  user authenticate and login
@@ -61,19 +58,29 @@ exports.login = async (req, res) => {
     if (user && (await bcrypt.compare(password, user.password))) {
       const token = jwt.sign(
         { user_id: user._id, email },
-        process.env.SECRET_KEY || "zakria",
-        {
-          expiresIn: "1h",
-        }
+        process.env.SECRET_KEY,
+        { expiresIn: process.env.token_duration }
       );
 
       user.token = token;
-      res.status(201).json(user);
-    } else res.status(400).send({ message: "InValid Credentials" });
+      req.session.user = user;
+      res.status(201).send({ name: user.name, token: user.token });
+    } else res.status(400).send({ message: "Invalid Credentials" });
   } catch (error) {
     res.status(500).send({
       message:
         error.message || "Some error occurred while fetching the user in login",
     });
+  }
+};
+
+// signout
+
+exports.signout = (req, res) => {
+  if (req.session.user) {
+    req.session.user = null;
+    res.send({ message: "Signed out Succesfully" });
+  } else {
+    res.send({ message: "Not logged in" });
   }
 };

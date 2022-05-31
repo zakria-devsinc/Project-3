@@ -38,7 +38,7 @@ exports.create = async (req, res) => {
       );
 
       user.token = token;
-      res.status(200).send({ message: "Signed Up Succesfully" });
+      res.status(200).send({ name: name, message: "Signed Up Succesfully" });
     }
   });
 };

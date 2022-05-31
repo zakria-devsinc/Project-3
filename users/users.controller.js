@@ -12,7 +12,7 @@ exports.create = async (req, res) => {
     res.status(400).send({ message: "All inputs is required" });
     return;
   }
-  User;
+
   const oldUser = await User.findOne({ email });
   if (oldUser) {
     res.status(409).send({ message: "User Already Exist" });

@@ -25,7 +25,7 @@ exports.create = async (req, res) => {
     password: password,
   });
 
-  user.save((error, result) => {
+  await user.save((error, result) => {
     if (error) {
       res.status(500).send({
         message: error.message || "Some error occurred while creating the user",
@@ -34,7 +34,7 @@ exports.create = async (req, res) => {
       const token = jwt.sign(
         { user_id: user._id, email },
         process.env.SECRET_KEY,
-        { expiresIn: process.env.token_duration }
+        { expiresIn: process.env.TOKEN_DURATION }
       );
 
       user.token = token;
@@ -59,7 +59,7 @@ exports.login = async (req, res) => {
       const token = jwt.sign(
         { user_id: user._id, email },
         process.env.SECRET_KEY,
-        { expiresIn: process.env.token_duration }
+        { expiresIn: process.env.TOKEN_DURATION }
       );
 
       user.token = token;
@@ -77,10 +77,20 @@ exports.login = async (req, res) => {
 // signout
 
 exports.signout = (req, res) => {
-  if (req.session.user) {
+  if (req.session?.user) {
     req.session.user = null;
     res.send({ message: "Signed out Succesfully" });
   } else {
     res.send({ message: "Not logged in" });
+  }
+};
+
+//is signed
+
+exports.isSigned = (req, res) => {
+  if (req.session?.user) {
+    return res.send({ message: "User Signed in" });
+  } else {
+    return res.send({ message: "Session Timeout Please SignIn" });
   }
 };

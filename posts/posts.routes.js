@@ -5,9 +5,9 @@ module.exports = (router) => {
 
   router.post("/posts/drafts", verifyToken, posts.create);
   router.get("/posts", posts.getAll);
-  router.patch("/posts", verifyToken, posts.edit);
-  router.patch("/posts/publish", verifyToken, posts.publish);
-  router.delete("/posts", verifyToken, posts.delete);
+  router.patch("/post", verifyToken, posts.edit);
+  router.patch("/post/publish/:post_id", verifyToken, posts.publish);
+  router.delete("/post/:post_id", verifyToken, posts.delete);
   router.get("/user/posts", verifyToken, posts.getMyPosts);
   router.get("/posts/drafts", verifyToken, posts.getDrafts);
 };

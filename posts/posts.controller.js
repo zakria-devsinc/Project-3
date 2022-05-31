@@ -2,12 +2,14 @@ const { db } = require("../db");
 const Post = db.posts;
 
 //create userid
-exports.create = (req, res) => {
-  const { title, content, isPublished } = req.body;
+exports.create = async (req, res) => {
+  const { title, content } = req.body;
   const userId = req.session?.user?._id;
 
-  if (!(title && content && isPublished && userId)) {
+  if (!(title && content)) {
     return res.status(400).send({ message: "All inputs required" });
+  } else if (!userId) {
+    return res.status(400).send({ message: "Session Timeout Please SignIn" });
   }
 
   const post = new Post({
@@ -17,22 +19,21 @@ exports.create = (req, res) => {
     isPublished: false,
   });
 
-  post
-    .save(post)
-    .then((data) => {
-      res.status(200).send({
-        post_id: data._id,
-        title: data.title,
-        content: data.content,
-        isPublished: data.isPublished,
-      });
-    })
-    .catch((error) => {
-      res.status(500).send({
+  await post.save((error, result) => {
+    if (error) {
+      return res.status(500).send({
         message:
           error.message || "Some error occurred while creating the draft post",
       });
-    });
+    } else {
+      res.status(200).send({
+        post_id: result._id,
+        title: result.title,
+        content: result.content,
+        isPublished: result.isPublished,
+      });
+    }
+  });
 };
 
 // edit posts
@@ -65,7 +66,7 @@ exports.edit = async (req, res) => {
 
 // publish post
 exports.publish = async (req, res) => {
-  const { post_id } = req.body;
+  const post_id = req.params.post_id;
 
   if (!post_id) {
     return res.status(400).send({ message: "All inputs required" });
@@ -96,7 +97,7 @@ exports.getDrafts = async (req, res) => {
   const userId = req.session?.user?._id;
 
   if (!userId) {
-    return res.status(400).send({ message: "All inputs required" });
+    return res.status(400).send({ message: "Session Timeout Please SignIn" });
   }
 
   try {
@@ -118,7 +119,7 @@ exports.getDrafts = async (req, res) => {
 
 // delete posts
 exports.delete = async (req, res) => {
-  const { post_id } = req.body;
+  const post_id = req.params.post_id;
 
   if (!post_id) {
     return res.status(400).send({ message: "All inputs required" });
@@ -164,7 +165,7 @@ exports.getAll = async (req, res) => {
 exports.getMyPosts = async (req, res) => {
   const userId = req.session?.user?._id;
   if (!userId) {
-    return res.status(400).send({ message: "All inputs required" });
+    return res.status(400).send({ message: "Session Timeout Please SignIn" });
   }
 
   try {

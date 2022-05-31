@@ -11,7 +11,7 @@ const verifyToken = (req, res, next) => {
   }
   try {
     const decoded = jwt.verify(token, process.env.SECRET_KEY, {
-      expiresIn: process.env.token_duration,
+      expiresIn: process.env.TOKEN_DURATION,
     });
 
     req.user = decoded;

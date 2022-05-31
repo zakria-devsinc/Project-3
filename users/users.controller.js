@@ -1,8 +1,8 @@
-const db = require("../db");
+const { db } = require("../db");
+
 const User = db.users;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const config = require("../db.config.js");
 
 // user creation using
 exports.create = async (req, res) => {
@@ -14,7 +14,6 @@ exports.create = async (req, res) => {
   }
 
   const oldUser = await User.findOne({ email });
-
   if (oldUser) {
     res.status(409).send({ message: "User Already Exist" });
     return;
@@ -26,21 +25,22 @@ exports.create = async (req, res) => {
     password: password,
   });
 
-  user
-    .save(user)
-    .then(() => {
-      const token = jwt.sign({ user_id: user._id, email }, config.secretKey, {
-        expiresIn: "2h",
+  await user.save((error, result) => {
+    if (error) {
+      res.status(500).send({
+        message: error.message || "Some error occurred while creating the user",
       });
+    } else {
+      const token = jwt.sign(
+        { user_id: user._id, email },
+        process.env.SECRET_KEY,
+        { expiresIn: process.env.TOKEN_DURATION }
+      );
 
       user.token = token;
-      res.status(201).json(user);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred while creating the user",
-      });
-    });
+      res.status(200).send({ message: "Signed Up Succesfully" });
+    }
+  });
 };
 
 //  user authenticate and login
@@ -56,17 +56,41 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      const token = jwt.sign({ user_id: user._id, email }, config.secretKey, {
-        expiresIn: "2h",
-      });
+      const token = jwt.sign(
+        { user_id: user._id, email },
+        process.env.SECRET_KEY,
+        { expiresIn: process.env.TOKEN_DURATION }
+      );
 
       user.token = token;
-      res.status(201).json(user);
-    } else res.status(400).send({ message: "InValid Credentials" });
+      req.session.user = user;
+      res.status(201).send({ name: user.name, token: user.token });
+    } else res.status(400).send({ message: "Invalid Credentials" });
   } catch (error) {
     res.status(500).send({
       message:
         error.message || "Some error occurred while fetching the user in login",
     });
+  }
+};
+
+// signout
+
+exports.signout = (req, res) => {
+  if (req.session?.user) {
+    req.session.user = null;
+    res.send({ message: "Signed out Succesfully" });
+  } else {
+    res.send({ message: "Not logged in" });
+  }
+};
+
+//is signed
+
+exports.isSigned = (req, res) => {
+  if (req.session?.user) {
+    return res.send({ message: "User Signed in" });
+  } else {
+    return res.send({ message: "Session Timeout Please SignIn" });
   }
 };

@@ -1,10 +1,11 @@
 {
-  "name": "project-3",
+  "name": "project3",
   "version": "1.0.0",
   "description": "my 1st project on node js",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
   "author": "Muhammad Zakria",
   "license": "ISC",
@@ -14,11 +15,21 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "express": "^4.17.1",
+    "express-session": "^1.17.3",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.15",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "validator": "^13.7.0"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zakria-devsinc/Project-3.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zakria-devsinc/Project-3/issues"
+  },
+  "homepage": "https://github.com/zakria-devsinc/Project-3#readme"
 }

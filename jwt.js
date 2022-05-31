@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-const config = require("./db.config.js");
 
 const verifyToken = (req, res, next) => {
   const token =
@@ -11,7 +10,9 @@ const verifyToken = (req, res, next) => {
       .send({ message: "A token is required for authentication" });
   }
   try {
-    const decoded = jwt.verify(token, config.secretKey);
+    const decoded = jwt.verify(token, process.env.SECRET_KEY, {
+      expiresIn: process.env.TOKEN_DURATION,
+    });
 
     req.user = decoded;
   } catch (error) {

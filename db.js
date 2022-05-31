@@ -1,11 +1,25 @@
-const dbConfig = require("./db.config.js");
 const mongoose = require("mongoose");
-
-mongoose.Promise = global.Promise;
-
 const db = {};
+
 db.mongoose = mongoose;
-db.url = dbConfig.url;
+db.url =
+  process.env.MONGODB_URI ||
+  "mongodb+srv://zakria:zakria3637@cluster0.etqfzty.mongodb.net/test";
 db.users = require("./users/users.model");
 db.posts = require("./posts/posts.model");
-module.exports = db;
+
+db.connectDatabase = () => {
+  mongoose
+    .connect(db.url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    })
+    .then(() => {
+      console.log("Connected to the database");
+    })
+    .catch((err) => {
+      console.log("cannot Connected to the database", err);
+      process.exit();
+    });
+};
+module.exports = { db };

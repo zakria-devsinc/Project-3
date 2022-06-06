@@ -4,7 +4,7 @@ const Post = db.posts;
 //create userid
 exports.create = async (req, res) => {
   const { title, content } = req.body;
-  const userId = req.session?.user?._id;
+  const userId = req.params.userId;
 
   if (!(title && content)) {
     return res.status(400).send({ message: "All inputs required" });
@@ -94,7 +94,7 @@ exports.publish = async (req, res) => {
 
 // get drafts
 exports.getDrafts = async (req, res) => {
-  const userId = req.session?.user?._id;
+  const userId = req.params.userId;
 
   if (!userId) {
     return res.status(400).send({ message: "Session Timeout Please SignIn" });
@@ -117,7 +117,7 @@ exports.getDrafts = async (req, res) => {
   }
 };
 
-// delete posts
+// delete post
 exports.delete = async (req, res) => {
   const post_id = req.params.post_id;
 
@@ -163,7 +163,7 @@ exports.getAll = async (req, res) => {
 
 //  get my posts
 exports.getMyPosts = async (req, res) => {
-  const userId = req.session?.user?._id;
+  const userId = req.params.userId;
   if (!userId) {
     return res.status(400).send({ message: "Session Timeout Please SignIn" });
   }

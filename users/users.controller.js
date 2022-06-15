@@ -1,5 +1,4 @@
 const { db } = require("../db");
-
 const User = db.users;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -63,34 +62,14 @@ exports.login = async (req, res) => {
       );
 
       user.token = token;
-      req.session.user = user;
-      res.status(201).send({ name: user.name, token: user.token });
+      res
+        .status(201)
+        .send({ user_id: user._id, name: user.name, token: user.token });
     } else res.status(400).send({ message: "Invalid Credentials" });
   } catch (error) {
     res.status(500).send({
       message:
         error.message || "Some error occurred while fetching the user in login",
     });
-  }
-};
-
-// signout
-
-exports.signout = (req, res) => {
-  if (req.session?.user) {
-    req.session.user = null;
-    res.send({ message: "Signed out Succesfully" });
-  } else {
-    res.send({ message: "Not logged in" });
-  }
-};
-
-//is signed
-
-exports.isSigned = (req, res) => {
-  if (req.session?.user) {
-    return res.send({ message: "User Signed in" });
-  } else {
-    return res.send({ message: "Session Timeout Please SignIn" });
   }
 };

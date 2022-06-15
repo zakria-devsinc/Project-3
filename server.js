@@ -1,9 +1,9 @@
 const express = require("express");
-const session = require("express-session");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const app = express();
 const { db } = require("./db");
+
 require("dotenv").config();
 
 let urlEncodedParser = bodyParser.urlencoded({
@@ -14,13 +14,6 @@ let corsOptions = {
 };
 let router = require("express").Router();
 
-app.use(
-  session({
-    secret: process.env.SECRET_KEY,
-    resave: false,
-    saveUninitialized: false,
-  })
-);
 app.use(urlEncodedParser);
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
@@ -31,6 +24,7 @@ db.connectDatabase();
 router.get("/", (req, res) => {
   res.send({ message: "Welcome to my application" });
 });
+
 //users routes created
 require("./users/user.routes")(router);
 // posts routes created

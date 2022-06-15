@@ -4,7 +4,7 @@ const Post = db.posts;
 //create userid
 exports.create = async (req, res) => {
   const { title, content } = req.body;
-  const userId = req.session?.user?._id;
+  const userId = req.params.userId;
 
   if (!(title && content)) {
     return res.status(400).send({ message: "All inputs required" });
@@ -27,10 +27,7 @@ exports.create = async (req, res) => {
       });
     } else {
       res.status(200).send({
-        post_id: result._id,
-        title: result.title,
-        content: result.content,
-        isPublished: result.isPublished,
+        message: "Draft Created",
       });
     }
   });
@@ -38,15 +35,15 @@ exports.create = async (req, res) => {
 
 // edit posts
 exports.edit = async (req, res) => {
-  const { post_id, title, content } = req.body;
+  const { postId, title, content } = req.body;
 
-  if (!(post_id, title && content)) {
+  if (!(postId, title && content)) {
     return res.status(400).send({ message: "All inputs required" });
   }
 
   try {
     const updatedPost = await Post.findOneAndUpdate(
-      { _id: post_id },
+      { _id: postId },
       { title, content }
     );
 
@@ -66,15 +63,15 @@ exports.edit = async (req, res) => {
 
 // publish post
 exports.publish = async (req, res) => {
-  const post_id = req.params.post_id;
+  const postId = req.params.postId;
 
-  if (!post_id) {
+  if (!postId) {
     return res.status(400).send({ message: "All inputs required" });
   }
 
   try {
     const publishPost = await Post.findOneAndUpdate(
-      { _id: post_id },
+      { _id: postId },
       { isPublished: true }
     );
 
@@ -94,7 +91,7 @@ exports.publish = async (req, res) => {
 
 // get drafts
 exports.getDrafts = async (req, res) => {
-  const userId = req.session?.user?._id;
+  const userId = req.params.userId;
 
   if (!userId) {
     return res.status(400).send({ message: "Session Timeout Please SignIn" });
@@ -117,16 +114,16 @@ exports.getDrafts = async (req, res) => {
   }
 };
 
-// delete posts
+// delete post
 exports.delete = async (req, res) => {
-  const post_id = req.params.post_id;
+  const postId = req.params.postId;
 
-  if (!post_id) {
+  if (!postId) {
     return res.status(400).send({ message: "All inputs required" });
   }
 
   try {
-    const deletedPost = await Post.findOneAndDelete({ _id: post_id });
+    const deletedPost = await Post.findOneAndDelete({ _id: postId });
 
     if (!deletedPost) {
       return res
@@ -163,7 +160,7 @@ exports.getAll = async (req, res) => {
 
 //  get my posts
 exports.getMyPosts = async (req, res) => {
-  const userId = req.session?.user?._id;
+  const userId = req.params.userId;
   if (!userId) {
     return res.status(400).send({ message: "Session Timeout Please SignIn" });
   }

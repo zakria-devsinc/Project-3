@@ -1,5 +1,5 @@
-const { db } = require("../db");
-const User = db.users;
+const { database } = require("../db");
+const User = database.users;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 

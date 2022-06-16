@@ -1,4 +1,4 @@
-const verifyToken = require("../jwt.js");
+const verifyToken = require("../middlewares/jwt.js");
 
 module.exports = (router) => {
   const posts = require("./posts.controller.js");

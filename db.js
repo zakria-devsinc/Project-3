@@ -1,16 +1,15 @@
 const mongoose = require("mongoose");
-const db = {};
+require("dotenv").config();
+const database = {};
 
-db.mongoose = mongoose;
-db.url =
-  process.env.MONGODB_URI ||
-  "mongodb+srv://zakria:zakria3637@cluster0.etqfzty.mongodb.net/test";
-db.users = require("./users/users.model");
-db.posts = require("./posts/posts.model");
+database.mongoose = mongoose;
+database.url = process.env.MONGODB_URI;
+database.users = require("./users/users.model");
+database.posts = require("./posts/posts.model");
 
-db.connectDatabase = () => {
+database.connectDatabase = () => {
   mongoose
-    .connect(db.url, {
+    .connect(database.url, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     })
@@ -22,4 +21,4 @@ db.connectDatabase = () => {
       process.exit();
     });
 };
-module.exports = { db };
+module.exports = { database };

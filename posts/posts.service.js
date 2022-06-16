@@ -1,5 +1,5 @@
-const { db } = require("../db");
-const Post = db.posts;
+const { database } = require("../db");
+const Post = database.posts;
 const { constants } = require("../constants/constants.js");
 const {
   DRAFT_CREATED,
@@ -7,11 +7,14 @@ const {
   POST_NOT_FOUND,
   POST_UPDATED,
   UPDATION_ERROR,
+  POST_PUBLISHED,
+  PUBLISHING_ERROR,
 } = constants;
 
 module.exports = {
   create,
   edit,
+  publish,
 };
 
 // draft create service
@@ -48,13 +51,35 @@ async function edit(request, response) {
     if (!updatedPost) {
       return response.status(400).send({ message: POST_NOT_FOUND });
     } else {
-      return res.status(201).send({ message: POST_UPDATED });
+      return response.status(201).send({ message: POST_UPDATED });
     }
   } catch (error) {
-    return res.status(500).send({
+    return response.status(500).send({
       message: error.message || UPDATION_ERROR,
     });
   }
 }
 
-// post edit service
+// post publish service
+async function publish(request, response) {
+  const postId = req.params.postId;
+
+  try {
+    const publishPost = await Post.findOneAndUpdate(
+      { _id: postId },
+      { isPublished: true }
+    );
+
+    if (!publishPost) {
+      return res.status(400).send({ message: POST_NOT_FOUND });
+    } else {
+      return res.status(201).send({ message: POST_PUBLISHED });
+    }
+  } catch (error) {
+    return res.status(400).send({
+      message: error.message || PUBLISHING_ERROR,
+    });
+  }
+}
+
+async function getDrafts(request, response) {}

@@ -1,13 +1,19 @@
+const { verifyPost, verifyPostId } = require("../middlewares/posts");
 const post_service = require("./posts.service");
 
 module.exports = (router) => {
-  router.post("/posts/drafts/:userId", create);
-  router.patch("/post", edit);
+  router.post("/posts/drafts/:userId", verifyPost, verifyPostId, create);
+  router.patch("/post", verifyPostId, edit);
+
+  // router.get("/posts", getAll);
+  router.patch("/post/publish/:postId", verifyPostId, publish);
+  // router.delete("/post/:postId", verifyToken, posts.delete);
+  // router.get("/user/posts/:userId", verifyToken, posts.getMyPosts);
+  // router.get("/posts/drafts/:userId", verifyToken, posts.getDrafts);
 };
 
 // create drafts
 function create(req, res, next) {
-  console.log("res");
   post_service
     .create(req, res)
     .then((response) => {
@@ -28,32 +34,17 @@ function edit(req, res, next) {
     });
 }
 
-// exports.edit = async (req, res) => {
-//   const { postId, title, content } = req.body;
-
-//   if (!(postId, title && content)) {
-//     return res.status(400).send({ message: "All inputs required" });
-//   }
-
-//   try {
-//     const updatedPost = await Post.findOneAndUpdate(
-//       { _id: postId },
-//       { title, content }
-//     );
-
-//     if (!updatedPost) {
-//       return res
-//         .status(400)
-//         .send({ message: "post not found with given id for updation" });
-//     } else {
-//       return res.status(201).send({ message: "post updated" });
-//     }
-//   } catch (error) {
-//     return res.status(500).send({
-//       message: error.message || "Some error occurred while updating the post",
-//     });
-//   }
-// };
+//publish post
+function publish(req, res, next) {
+  post_service
+    .publish(req.body)
+    .then((response) => {
+      console.info(response);
+    })
+    .catch((error) => {
+      console.info(error);
+    });
+}
 
 // // publish post
 // exports.publish = async (req, res) => {

@@ -1,24 +1,31 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-let PostSchema = mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
+const PostSchema = mongoose.Schema(
+  {
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "users",
+      required: true,
+    },
+    title: {
+      type: String,
+      required: true,
+    },
+    content: {
+      type: String,
+      required: true,
+    },
+    isPublished: {
+      type: String,
+      required: true,
+      default: false,
+    },
   },
-  content: {
-    type: String,
-    required: true,
-  },
-  userId: {
-    type: String,
-    required: true,
-  },
-  isPublished: {
-    type: String,
-    required: true,
-    default: false,
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 const Posts = mongoose.model("posts", PostSchema);
 

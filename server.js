@@ -4,6 +4,8 @@ const bodyParser = require("body-parser");
 const app = express();
 const { database } = require("./db");
 const verifyToken = require("./middlewares/jwt");
+const { constants } = require("./constants/constants");
+const { RUNNING_PORT } = constants;
 require("dotenv").config();
 
 let urlEncodedParser = bodyParser.urlencoded({
@@ -17,21 +19,15 @@ let router = require("express").Router();
 app.use(urlEncodedParser);
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
+app.use(verifyToken);
 app.use("/api", router);
 
 database.connectDatabase();
 
-router.get("/", (req, res) => {
-  res.send({ message: "Welcome to my application" });
-});
-
-//users routes created
-require("./users/user.routes")(router);
-// posts routes created
-require("./posts/posts.routes")(router);
+require("./routes/routes")(router);
 
 const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
-  console.log(`Server is runnig on the port ${PORT}`);
+  console.info(`${RUNNING_PORT} ${PORT}`);
 });

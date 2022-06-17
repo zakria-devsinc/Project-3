@@ -80,7 +80,7 @@ function getAllPosts(req, res, next) {
   post_service
     .getAll(res)
     .then((response) => {
-      // return response
+      return response;
     })
     .catch((error) => {
       console.info(error);

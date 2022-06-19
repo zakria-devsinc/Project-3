@@ -110,7 +110,9 @@ async function getDrafts(request, response) {
     const draftPosts = await Post.find({
       userId: userId,
       isPublished: false,
-    }).sort("-date");
+    })
+      .populate("userId")
+      .sort({ createdAt: -1 });
 
     if (!draftPosts) {
       return response.status(400).send({ message: POST_NOT_FOUND });
@@ -146,7 +148,9 @@ async function deletePost(request, response) {
 //get All posts
 async function getAll(response) {
   try {
-    const publishedPosts = await Post.find({ isPublished: true }).sort("-date");
+    const publishedPosts = await Post.find({ isPublished: true })
+      .sort({ createdAt: -1 })
+      .populate("userId");
 
     if (!publishedPosts) {
       return response.status(404).send({ message: POST_NOT_FOUND });
@@ -168,7 +172,9 @@ async function getMyPosts(request, response) {
     const publishedPosts = await Post.find({
       isPublished: true,
       userId: userId,
-    }).sort("-date");
+    })
+      .sort({ createdAt: -1 })
+      .populate("userId");
 
     if (!publishedPosts) {
       return response.status(404).send({ message: POST_NOT_FOUND });

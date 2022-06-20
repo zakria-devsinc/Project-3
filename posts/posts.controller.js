@@ -42,7 +42,7 @@ function edit(req, res, next) {
 //publish post
 function publish(req, res, next) {
   post_service
-    .publish(req.body)
+    .publish(req, res)
     .then((response) => {
       return response;
     })

@@ -61,10 +61,10 @@ async function create(request, response) {
 
 //post edit service
 async function edit(request, response) {
-  const { post_id, title, content } = request.body;
+  const { postId, title, content } = request.body;
   try {
     const updatedPost = await Post.findOneAndUpdate(
-      { _id: post_id },
+      { _id: postId },
       { title: title, content: content }
     );
 

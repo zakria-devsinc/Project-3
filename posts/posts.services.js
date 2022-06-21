@@ -44,6 +44,7 @@ const create = async (request, response) => {
 //post edit service
 const edit = async (request, response) => {
   const { postId, title, content } = request.body;
+
   try {
     const updatedPost = await Post.findOneAndUpdate(
       { _id: postId },
@@ -92,7 +93,7 @@ const getDrafts = async (request, response) => {
       isPublished: false,
     })
       .populate("userId")
-      .sort({ createdAt: -1 });
+      .sort({ updatedAt: -1 });
 
     if (!draftPosts) {
       return response.status(400).send({ message: POST_NOT_FOUND });
@@ -125,7 +126,7 @@ const deletePost = async (request, response) => {
 const getAll = async (response) => {
   try {
     const publishedPosts = await Post.find({ isPublished: true })
-      .sort({ createdAt: -1 })
+      .sort({ updatedAt: -1 })
       .populate("userId");
 
     if (!publishedPosts) {
@@ -147,7 +148,7 @@ const getMyPosts = async (request, response) => {
       isPublished: true,
       userId: userId,
     })
-      .sort({ createdAt: -1 })
+      .sort({ updatedAt: -1 })
       .populate("userId");
 
     if (!publishedPosts) {

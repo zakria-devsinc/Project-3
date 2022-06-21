@@ -5,13 +5,8 @@ const jwt = require("jsonwebtoken");
 const { constants } = require("../constants/constants.js");
 const { USER_EXISTS, SIGNED_UP, INVALID_CREDENTIALS } = constants;
 
-module.exports = {
-  create,
-  signIn,
-};
-
 //create user service
-async function create(request, response) {
+const create = async (request, response) => {
   const { name, email, password } = request.body;
 
   try {
@@ -44,14 +39,12 @@ async function create(request, response) {
       }
     });
   } catch (error) {
-    return response.status(500).send({
-      message: error.message,
-    });
+    return response.status(500).send({ message: error.message });
   }
-}
+};
 
 //sign in user service
-async function signIn(req, res) {
+const signIn = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
@@ -69,8 +62,11 @@ async function signIn(req, res) {
         .send({ user_id: user._id, name: user.name, token: user.token });
     } else res.status(400).send({ message: INVALID_CREDENTIALS });
   } catch (error) {
-    return res.status(500).send({
-      message: error.message,
-    });
+    return res.status(500).send({ message: error.message });
   }
-}
+};
+
+module.exports = {
+  create,
+  signIn,
+};

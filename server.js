@@ -6,7 +6,9 @@ const { database } = require("./db");
 const verifyToken = require("./middlewares/jwt");
 const { constants } = require("./constants/constants");
 const { RUNNING_PORT } = constants;
+const PORT = process.env.PORT;
 require("dotenv").config();
+database.connectDatabase();
 
 let urlEncodedParser = bodyParser.urlencoded({
   extended: true,
@@ -22,11 +24,7 @@ app.use(bodyParser.json());
 app.use(verifyToken);
 app.use("/api", router);
 
-database.connectDatabase();
-
 require("./routes/routes")(router);
-
-const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
   console.info(`${RUNNING_PORT} ${PORT}`);

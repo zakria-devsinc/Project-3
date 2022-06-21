@@ -1,6 +1,7 @@
 const { constants } = require("../constants/constants.js");
 const { INPUTS_REQUIRED } = constants;
-exports.verifyUserCreate = (request, response, next) => {
+
+const validateUserCreate = (request, response, next) => {
   const { name, email, password } = request.body;
 
   if (!(name && email && password)) {
@@ -10,7 +11,7 @@ exports.verifyUserCreate = (request, response, next) => {
   next();
 };
 
-exports.verifySignIn = (request, response, next) => {
+const validateSignIn = (request, response, next) => {
   const { email, password } = request.body;
 
   if (!(email && password)) {
@@ -19,3 +20,5 @@ exports.verifySignIn = (request, response, next) => {
 
   next();
 };
+
+module.exports = { validateSignIn, validateUserCreate };

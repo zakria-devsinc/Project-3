@@ -14,4 +14,6 @@ exports.constants = {
   INVALID_CREDENTIALS: "Invalid Credentials",
   USER_NOT_FOUND: "User does not exists",
   RUNNING_PORT: "Server is runnig on the port ",
+  CONNECTED: "Connected to the database",
+  NOT_CONNECTED: "couldn't conected to the database ",
 };

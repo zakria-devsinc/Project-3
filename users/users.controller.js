@@ -1,27 +1,17 @@
-const { verifyUserCreate, verifySignIn } = require("../middlewares/users");
-const user_service = require("./users.services");
-
-module.exports = (router) => {
-  router.post("/signup", verifyUserCreate, create);
-  router.post("/signin", verifySignIn, login);
-};
+const { validateUserCreate, validateSignIn } = require("../middlewares/users");
+const userServices = require("./users.services");
 
 // user creation using
-function create(req, res, next) {
-  user_service
-    .create(req, res)
-    .then((response) => {
-      return response;
-    })
-    .catch((error) => console.info(error));
-}
+const create = (req, res, next) => {
+  userServices.create(req, res);
+};
 
 //  user authenticate and login
-function login(req, res, next) {
-  user_service
-    .signIn(req, res)
-    .then((response) => {
-      return response;
-    })
-    .catch((error) => console.info(error));
-}
+const login = (req, res, next) => {
+  userServices.signIn(req, res);
+};
+
+module.exports = (router) => {
+  router.post("/signup", validateUserCreate, create);
+  router.post("/signin", validateSignIn, login);
+};

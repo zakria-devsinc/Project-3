@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
+const { constants } = require("./constants/constants");
 require("dotenv").config();
 const database = {};
+const { CONNECTED, NOT_CONNECTED } = constants;
 
 database.mongoose = mongoose;
 database.url = process.env.MONGODB_URI;
@@ -14,11 +16,12 @@ database.connectDatabase = () => {
       useUnifiedTopology: true,
     })
     .then(() => {
-      console.log("Connected to the database");
+      console.log(CONNECTED);
     })
     .catch((err) => {
-      console.log("cannot Connected to the database", err);
+      console.log(NOT_CONNECTED, err);
       process.exit();
     });
 };
+
 module.exports = { database };

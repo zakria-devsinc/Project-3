@@ -12,55 +12,37 @@ const {
   USER_NOT_FOUND,
 } = constants;
 
-module.exports = {
-  create,
-  edit,
-  publish,
-  getDrafts,
-  getAll,
-  deletePost,
-  getMyPosts,
-};
-
 // draft create service
-async function create(request, response) {
+const create = async (request, response) => {
   const { title, content } = request.body;
   const userId = request.params.userId;
 
-  User.find({ _id: userId })
-    .then((resp) => {
-      if (resp.length) {
-        const post = new Post({
-          title: title,
-          content: content,
-          userId: userId,
-        });
+  try {
+    const user = await User.find({ _id: userId });
 
-        (async () =>
-          await post.save((error, result) => {
-            if (error) {
-              return response.status(500).send({
-                message: error.message || DRAFT_ERROR,
-              });
-            } else {
-              response.status(201).send({
-                message: DRAFT_CREATED,
-              });
-            }
-          }))();
-      } else {
-        return response.status(404).send({ message: USER_NOT_FOUND });
-      }
-    })
-    .catch((error) => {
-      return response.status(500).send({
-        message: error.message,
+    if (user) {
+      const post = new Post({
+        title: title,
+        content: content,
+        userId: userId,
       });
-    });
-}
+      await post.save((error, result) => {
+        if (result) {
+          return response.status(201).send({ message: DRAFT_CREATED });
+        } else {
+          return response.status(500).send({ message: DRAFT_ERROR });
+        }
+      });
+    } else {
+      return response.status(404).send({ message: USER_NOT_FOUND });
+    }
+  } catch (error) {
+    return response.status(500).send({ message: error.message });
+  }
+};
 
 //post edit service
-async function edit(request, response) {
+const edit = async (request, response) => {
   const { postId, title, content } = request.body;
   try {
     const updatedPost = await Post.findOneAndUpdate(
@@ -74,14 +56,12 @@ async function edit(request, response) {
       return response.status(201).send({ message: POST_UPDATED });
     }
   } catch (error) {
-    return response.status(500).send({
-      message: error.message,
-    });
+    return response.status(500).send({ message: error.message });
   }
-}
+};
 
 // post publish service
-async function publish(request, response) {
+const publish = async (request, response) => {
   const postId = request.params.postId;
 
   try {
@@ -100,10 +80,10 @@ async function publish(request, response) {
       message: error.message,
     });
   }
-}
+};
 
 // get Drafts service
-async function getDrafts(request, response) {
+const getDrafts = async (request, response) => {
   const userId = request.params.userId;
 
   try {
@@ -120,14 +100,12 @@ async function getDrafts(request, response) {
       return response.status(200).json(draftPosts);
     }
   } catch (error) {
-    return response.status(500).send({
-      message: error.message,
-    });
+    return response.status(500).send({ message: error.message });
   }
-}
+};
 
 // delete post service
-async function deletePost(request, response) {
+const deletePost = async (request, response) => {
   const postId = request.params.postId;
 
   try {
@@ -139,14 +117,12 @@ async function deletePost(request, response) {
       return response.status(200).send({ message: POST_DELETED });
     }
   } catch (error) {
-    return response.status(500).send({
-      message: error.message,
-    });
+    return response.status(500).send({ message: error.message });
   }
-}
+};
 
 //get All posts
-async function getAll(response) {
+const getAll = async (response) => {
   try {
     const publishedPosts = await Post.find({ isPublished: true })
       .sort({ createdAt: -1 })
@@ -158,14 +134,12 @@ async function getAll(response) {
       return response.status(200).json(publishedPosts);
     }
   } catch (error) {
-    return response.status(500).send({
-      message: error.message,
-    });
+    return response.status(500).send({ message: error.message });
   }
-}
+};
 
 // get My Posts
-async function getMyPosts(request, response) {
+const getMyPosts = async (request, response) => {
   const userId = request.params.userId;
 
   try {
@@ -182,8 +156,16 @@ async function getMyPosts(request, response) {
       return response.status(200).json(publishedPosts);
     }
   } catch (error) {
-    return response.status(500).send({
-      message: error.message,
-    });
+    return response.status(500).send({ message: error.message });
   }
-}
+};
+
+module.exports = {
+  create,
+  edit,
+  publish,
+  getDrafts,
+  getAll,
+  deletePost,
+  getMyPosts,
+};

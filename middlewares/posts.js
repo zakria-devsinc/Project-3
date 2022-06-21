@@ -1,7 +1,7 @@
 const { constants } = require("../constants/constants.js");
 const { INPUTS_REQUIRED } = constants;
 
-exports.verifyPost = (req, res, next) => {
+const validatePostCreate = (req, res, next) => {
   const { title, content } = req.body;
 
   if (!(title && content)) {
@@ -11,7 +11,7 @@ exports.verifyPost = (req, res, next) => {
   next();
 };
 
-exports.verifyEdit = (req, res, next) => {
+const validateEdit = (req, res, next) => {
   const { post_id, title, content } = req.body;
 
   if (!(post_id, title && content)) {
@@ -21,8 +21,8 @@ exports.verifyEdit = (req, res, next) => {
   next();
 };
 
-exports.verifyPostId = (req, res, next) => {
-  const postId = req.params.postId;
+const validatePostId = (req, res, next) => {
+  const { postId } = req.params;
 
   if (!postId) {
     return res.status(400).send({ message: INPUTS_REQUIRED });
@@ -31,12 +31,19 @@ exports.verifyPostId = (req, res, next) => {
   next();
 };
 
-exports.verifyUserId = (req, res, next) => {
-  const userId = req.params.userId;
+const validateUserId = (req, res, next) => {
+  const { userId } = req.params;
 
   if (!userId) {
     return res.status(400).send({ message: INPUTS_REQUIRED });
   }
 
   next();
+};
+
+module.exports = {
+  validateEdit,
+  validatePostId,
+  validatePostCreate,
+  validateUserId,
 };

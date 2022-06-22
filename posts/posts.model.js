@@ -11,10 +11,13 @@ const PostSchema = mongoose.Schema(
     title: {
       type: String,
       required: true,
+      max: 50,
+      min: 5,
     },
     content: {
       type: String,
       required: true,
+      min: 5,
     },
     isPublished: {
       type: String,

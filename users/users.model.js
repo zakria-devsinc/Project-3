@@ -7,6 +7,7 @@ let UserSchema = mongoose.Schema(
     name: {
       type: String,
       required: true,
+      max: 40,
     },
     email: {
       type: String,
@@ -17,6 +18,7 @@ let UserSchema = mongoose.Schema(
     password: {
       type: String,
       required: true,
+      min: 8,
     },
     token: {
       type: String,

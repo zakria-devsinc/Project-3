@@ -1,4 +1,4 @@
 module.exports = (router) => {
-  require("../posts/posts.controller")(router);
-  require("../users/users.controller")(router);
+  require("../posts/posts.router")(router);
+  require("../users/users.router")(router);
 };
